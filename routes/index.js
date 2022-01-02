@@ -1,5 +1,6 @@
 var express = require("express");
 var router = express.Router();
+var distanceInWords = require("date-fns/formatDistanceToNow");
 
 const messages = [
   {
@@ -15,17 +16,21 @@ const messages = [
 ];
 
 router.get("/", function (req, res, next) {
-  res.render("index", { title: "Mini Message Board", messages: messages });
+  res.render("index", {
+    title: "Mini Message Board",
+    messages: messages,
+    format: distanceInWords,
+  });
 });
 
 router.get("/new", function (req, res, next) {
   res.render("form", { title: "New Message" });
 });
 
-router.post("/new", function (res, req) {
-  messages.push({
-    text: res.body.message,
-    user: res.body.name,
+router.post("/new", function (req, res, next) {
+  messages.unshift({
+    text: req.body.message,
+    user: req.body.name,
     added: new Date(),
   });
   res.redirect("/");
